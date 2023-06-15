@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Add College{% endblock %}
+{% block contents %}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for msg in messages%}
+                <p>{{msg}}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+<form action="{{ url_for('add_college') }}" method="POST">
+    
+    <div class="input-group">
+        <label for="college_name"> College Name:  </label>
+        <input type="text" id="college_name" name="college_name" required>        
+    </div>
+<br>
+    <div class="input-group">
+        <label for="address"> Location State: </label>
+        <select id="address" name="location">
+            <option value="">-- Select a location --</option>
+            {% for state in states %}
+                <option value="{{ state.name }}">{{ state.name }}</option>
+            {% endfor %}
+        </select>
+        <!-- <br>
+        <label for="new_city">New City:</label>
+        <input type="text" id="new_city" name="new_city"> -->
+    </div>
+
+    
+    <a href="/add_college"><button type = 'submit'> Add College </button></a>
+    
+</form>
+{% endblock %}

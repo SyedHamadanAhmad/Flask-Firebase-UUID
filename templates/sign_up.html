@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+</head>
+<body>
+    <form action="/sign_up" method="POST" id="formElement">
+        <div class="main">
+            <div>
+                <label>Name</label>
+                <input name="name" placeholder="name" id="name" type="name" />
+            </div>
+            
+            <div>
+                <label>Email</label>
+                <input name="email" placeholder="Email" id="email" type="email" />
+            </div>
+            <div>
+                <label>Password</label>
+                <input name="password" placeholder="Password" id="password" type="password" />
+               <div>
+                <label hidden>UUID</label>
+                <input name="uuid" id="uuid"hidden/>
+               </div> 
+                
+    
+            </div>
+            
+             <!-- <button onclick="register()" id="preventButton">Sign up</button> -->
+          <div id="submitDiv">
+            Submit using div
+          </div>
+
+            <!-- <button id="submit_button" type="submit" >Actual submit</button> -->
+
+            
+
+
+    </form>
+    
+</body>
+<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+<script>
+    const firebaseApp = firebase.initializeApp({
+    apiKey: "AIzaSyCn8dMYxbT3_flp5M2mnNbywk-MaZiLH1Q",
+    authDomain: "test-project-b41ca.firebaseapp.com",
+    projectId: "test-project-b41ca",
+    storageBucket: "test-project-b41ca.appspot.com",
+    messagingSenderId: "337084528583",
+    appId: "1:337084528583:web:adbe0293fe720ccf3c8be2",
+    measurementId: "G-RM36F7YWSM"
+});
+
+const auth = firebaseApp.auth();
+const submit_div=document.getElementById("submitDiv")
+const form_element=document.getElementById("formElement")
+
+submit_div.addEventListener('click', register);
+// function submitForm(){
+    // form_element.submit();
+// }
+
+// document.getElementById("submit_button").addEventListener("click",(event)=>{
+//     event.preventDefault()
+// })
+
+function register(){
+    alert("inside register")
+
+    
+    const email = document.getElementById('email').value
+    const password =  document.getElementById('password').value
+    // var uuid = document.getElementById("uuid").value
+
+    
+    auth.createUserWithEmailAndPassword(email, password)
+    .then((res) => {
+        console.log(res.user)
+        const user_id=res.user.uid
+        // var uuid=document.getElementById("uuid").value
+        // uuid =res.user.uid
+        document.getElementById("uuid").value = res.user.uid
+        // console.log(uuid.value)
+        // document.getElementById("submit_button").click()
+        setTimeout(() => {
+            // document.getElementById("submit_button").click()
+            form_element.submit();
+        }, 2000);
+        // 
+        
+    })
+    .catch((err) => {
+        alert(err.message)
+        console.log(err.code)
+        console.log(err.message)
+    })
+
+    // document.getElementById("submit_button").click()
+
+}
+
+</script>
+</html>
