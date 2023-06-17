@@ -1,7 +1,7 @@
 import os
 from flask import Flask, redirect, url_for, render_template, request, session, flash, jsonify
 from datetime import timedelta, datetime
-# import pyrebase
+import pyrebase
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from sqlalchemy.orm import relationship
@@ -10,6 +10,21 @@ import pandas as pd
 # from flask_migrate import Migrate
 
 app = Flask(__name__)
+
+config= {
+    "apiKey": "AIzaSyCn8dMYxbT3_flp5M2mnNbywk-MaZiLH1Q",
+    "authDomain": "test-project-b41ca.firebaseapp.com",
+    "projectId": "test-project-b41ca",
+    "storageBucket": "test-project-b41ca.appspot.com",
+    "messagingSenderId": "337084528583",
+    "appId": "1:337084528583:web:adbe0293fe720ccf3c8be2",
+    "measurementId": "G-RM36F7YWSM",
+    "databaseURL":""
+       }
+firebase=pyrebase.initialize_app(config)
+auth=firebase.auth()
+
+
 app.secret_key = "Avricus"
 app.permanent_session_lifetime = timedelta(hours=5)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///iit3.db'  # Change the database URL as per your preference
@@ -19,6 +34,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app) 
 # migrate = Migrate(app, db)
+
+
 
 
 class IIT(db.Model):
@@ -89,21 +106,17 @@ def sign_up():
                 session["uuid"] = found_user.uuid
         else: 
             # usr = users(user, "")
-            print("abcd")
+            # print("abcd")
             found_user = users(email=email, name=name, uuid=uuid, password=password)
             db.session.add(found_user)
             db.session.commit()
-
-        
-        return redirect(url_for("view_logs"))
+        return redirect(url_for("user"))
     else:
-        if "user" in session:
-            flash(f"You are already Logged In!!!")
-            return render_template("sign_up.html")
+            if "user" in session:
+                flash(f"You are already Logged In!!!")
+                return render_template("sign_up.html")
         
-        return render_template("sign_up.html")
-        
-
+       
 
 
 
@@ -123,38 +136,23 @@ def view_logs():
 @app.route("/login", methods = ["POST", "GET"])
 def login():
     if request.method == "POST":
-        # session.permanent = True
-        user = request.form["name"]
-        session["user"] = user
-
-        # name = request.form["name"]
-        email = request.form["email"]
-        # session["user"] = name
-        session["email"] = email
-
-
-        found_user = users.query.filter_by(name = user).first()
-        if found_user:
-            session["email"] = found_user.email
-        else: 
-            # usr = users(user, "")
-            found_user = users(name=user, email=email)
-            db.session.add(found_user)
-            db.session.commit()
+      email=request.form['email']
+      password=request.form['password']
+      
+      try:
+          user=auth.sign_in_with_email_and_password(email, password)
+          session['user']=email
+          found_user = users.query.filter_by(email = email).first()
+          found_user.add_login_timestamp()
+          
+      except:
+          return "Failed to login"
             
-        # Update the timestamp and save the details
-        found_user.add_login_timestamp()
-        db.session.commit()
-        
+   
 
-        flash(f"Login Successful!!!")
-        return None
-    else:
-        if "user" in session:
-            flash(f"You are already Logged In!!!")
-            return None
-        
-        return render_template("login.html")
+
+    return render_template("login.html")        
+    
 
 @app.route("/user", methods=["POST", "GET"])
 def user():
@@ -173,10 +171,10 @@ def user():
             if "email" in session:
                 email = session["email"]
 
-        return render_template("user.html", email=email)
+        return render_template("sign_up.html")
     else:
-        flash(f"You are not logged in!!!")
-        return None
+        # flash(f"You are not logged in!!!")
+        return redirect(url_for("login"))
 
 @app.route("/logout")
 def logout():
@@ -184,7 +182,7 @@ def logout():
         user = session["user"]
         flash(f"You have been logged out, {user}", "info")
     else:
-        flash(f"You are not logged in!!! LOGIN First ;)", "info")
+        flash(f"You are not logged in!!! LOGIN First :)", "info")
     session.pop("user", None)
     session.pop("email", None)
     return redirect(url_for("login"))

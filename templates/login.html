@@ -9,10 +9,45 @@
         {% endif %}
     {% endwith %}
 <form actions = "#" method="post">
-    <p>Name: </p>
-    <p><input type="text" name="name"></p>
+    <!-- <p>Name: </p>
+    <p><input type="text" name="name"></p> -->
     <p><label for="email">Your Email: </label></p>
-    <input type="email" id="email" name="email" placeholder="Enter Email" value="{{email if email}}">
-    <p><input type="submit" value="Submit"></p>
+    <input type="email" id="email" name="email" placeholder="Enter Email">
+    <p><label for="password">Password: </label></p>
+    <input type="password" id="password" name="password" placeholder="Password"><br>
+    <br>
+    <button type='submit' class="login-btn"> Sign In </button> 
+  
+    
 </form>
+<!-- <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+<script>
+    const firebaseApp = firebase.initializeApp({
+    apiKey: "AIzaSyCn8dMYxbT3_flp5M2mnNbywk-MaZiLH1Q",
+    authDomain: "test-project-b41ca.firebaseapp.com",
+    projectId: "test-project-b41ca",
+    storageBucket: "test-project-b41ca.appspot.com",
+    messagingSenderId: "337084528583",
+    appId: "1:337084528583:web:adbe0293fe720ccf3c8be2",
+    measurementId: "G-RM36F7YWSM"
+});
+
+const auth = firebaseApp.auth();
+const login_with_email = () => {
+    const email = document.getElementById('email').value
+    const password = document.getElementById('password').value
+
+    auth.signInWithEmailAndPassword(email, password)
+    .then((res) => {
+        console.log(res.user)
+    })
+    .catch((err) => {
+        alert(err.message)
+        console.log(err.code)
+        console.log(err.message)
+    })
+}
+</script> -->
+
 {% endblock %}
