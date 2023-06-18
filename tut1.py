@@ -58,6 +58,16 @@ class users(db.Model):
         self.password = password
         self.timestamp = ""
 
+    # def add_sign_up_timestamp(self):
+    #     now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #     if self.timestamp:
+    #             self.timestamp += f"CREATED ACCOUNT:, {now}"
+            
+    #     else:
+    #         self.timestamp = now
+    #     self.create_acc_logs_file()  # Update the logs file immediately after adding the timestamp
+    
+    
     def add_login_timestamp(self):
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         if self.timestamp:
@@ -74,6 +84,11 @@ class users(db.Model):
         logs_file_path = os.path.join(os.path.dirname(__file__), "logs_final.txt")
         with open(logs_file_path, "a") as file:
             file.write(f"{self.name}: {self.get_login_timestamps()}\nEmail: {self.email}\n")
+
+    # def create_acc_logs_file(self):
+    #     logs_file_path = os.path.join(os.path.dirname(__file__), "logs_final.txt")
+    #     with open(logs_file_path, "a") as file:
+    #         file.write(f"{self.name}: {self.get_login_timestamps()}\nEmail: {self.email}\n")
 
 class City(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -110,6 +125,7 @@ def sign_up():
             found_user = users(email=email, name=name, uuid=uuid, password=password)
             db.session.add(found_user)
             db.session.commit()
+            found_user.add_sign_up_timestamp()
         return redirect(url_for("user"))
     else:
             if "user" in session:
@@ -138,20 +154,18 @@ def login():
     if request.method == "POST":
       email=request.form['email']
       password=request.form['password']
+      user=auth.sign_in_with_email_and_password(email, password)
+      session['user']=email
+      found_user=users.query.filter_by(email=email).first()
+      found_user.add_login_timestamp()
+
+      return redirect(url_for("home"))
+    
+    else:
+        return render_template("login.html")
       
-      try:
-          user=auth.sign_in_with_email_and_password(email, password)
-          session['user']=email
-          found_user = users.query.filter_by(email = email).first()
-          found_user.add_login_timestamp()
-          
-      except:
-          return "Failed to login"
-            
-   
-
-
-    return render_template("login.html")        
+     
+         
     
 
 @app.route("/user", methods=["POST", "GET"])
