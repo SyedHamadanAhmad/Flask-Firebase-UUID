@@ -48,14 +48,14 @@ class users(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100))
     uuid = db.Column(db.String(28), nullable=False)
-    password = db.Column(db.String(100))
+    # password = db.Column(db.String(100))
     timestamp = db.Column(db.String(100))
 
-    def __init__(self, name, email, uuid, password):
+    def __init__(self, name, email, uuid):
         self.name = name
         self.email = email
         self.uuid = uuid
-        self.password = password
+       
         self.timestamp = ""
 
     # def add_sign_up_timestamp(self):
@@ -110,7 +110,7 @@ def sign_up():
         session['email']=email
 
         password=request.form['password']
-        session['password']=password
+        # session['password']=password
 
         uuid=request.form["uuid"]
         session['uuid']=uuid
@@ -122,17 +122,17 @@ def sign_up():
         else: 
             # usr = users(user, "")
             # print("abcd")
-            found_user = users(email=email, name=name, uuid=uuid, password=password)
+            found_user = users(email=email, name=name, uuid=uuid)
             db.session.add(found_user)
             db.session.commit()
-            found_user.add_sign_up_timestamp()
+            # found_user.add_sign_up_timestamp()
         return redirect(url_for("user"))
     else:
-            if "user" in session:
-                flash(f"You are already Logged In!!!")
-                return render_template("sign_up.html")
+        if "user" in session:
+            flash(f"You are already Logged In!!!")
+        return render_template("sign_up.html")
         
-       
+    # return render_template("sign_up.html")
 
 
 
@@ -155,17 +155,23 @@ def login():
       email=request.form['email']
       password=request.form['password']
       user=auth.sign_in_with_email_and_password(email, password)
-      session['user']=email
+      session['email']=email
       found_user=users.query.filter_by(email=email).first()
       found_user.add_login_timestamp()
 
-      return redirect(url_for("home"))
+      return redirect(url_for("user"))
     
     else:
         return render_template("login.html")
       
      
-         
+# def get_password(email):
+    
+#     user=users.query.filter_by(email=email).first()
+#     if user:
+#         return users.password
+#     else:
+#         return "error:user not found"
     
 
 @app.route("/user", methods=["POST", "GET"])

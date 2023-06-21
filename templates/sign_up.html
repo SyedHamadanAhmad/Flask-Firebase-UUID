@@ -76,7 +76,7 @@ function register(){
     const password =  document.getElementById('password').value
     // var uuid = document.getElementById("uuid").value
 
-    
+    localStorage.setItem("Password", password)
     auth.createUserWithEmailAndPassword(email, password)
     .then((res) => {
         console.log(res.user)

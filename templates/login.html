@@ -20,7 +20,7 @@
    
    
 
-
+</form>
 <button id="google-btn" onclick="googleAuthentication()">Sign in with google</button>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
@@ -48,6 +48,18 @@ firebase.auth()
   .then((result) => {
     // /** @type {firebase.auth.OAuthCredential} */
     var credential = result.credential;
+   let email=result.user.email
+   let password=localStorage.getItem("Password")
+
+   var email_pass = firebase.auth.EmailAuthProvider.credential(email, password);
+   auth.currentUser.linkWithCredential(email_pass)
+  .then((usercred) => {
+    var user = usercred.user;
+    console.log("Account linking success", user);
+  }).catch((error) => {
+    console.log("Account linking error", error);
+  });
+    
 
     // This gives you a Google Access Token. You can use it to access the Google API.
     var token = credential.accessToken;
