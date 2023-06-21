@@ -159,7 +159,7 @@ def login():
       found_user=users.query.filter_by(email=email).first()
       found_user.add_login_timestamp()
 
-      return redirect(url_for("user"))
+      return render_template("user.html")
     
     else:
         return render_template("login.html")

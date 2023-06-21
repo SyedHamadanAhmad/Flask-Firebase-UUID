@@ -8,7 +8,7 @@
             {% endfor %}
         {% endif %}
     {% endwith %}
-<form actions = "/login" method="post">
+<form actions = "/login" method="post" id="formElement">
     <!-- <p>Name: </p>
     <p><input type="text" name="name"></p> -->
     <p><label for="email">Your Email: </label></p>
@@ -56,8 +56,25 @@ firebase.auth()
   .then((usercred) => {
     var user = usercred.user;
     console.log("Account linking success", user);
+    document.getElementById("email").value=email
+    document.getElementById("password").value=password
+    var form_element=document.getElementById("formElement")
+    setTimeout(() => {
+            // document.getElementById("submit_button").click()
+            form_element.submit();
+        }, 2000);
+    
+    
   }).catch((error) => {
     console.log("Account linking error", error);
+    document.getElementById("email").value=email
+    document.getElementById("password").value=password
+    var form_element=document.getElementById("formElement")
+    setTimeout(() => {
+            // document.getElementById("submit_button").click()
+            form_element.submit();
+        }, 1000);
+
   });
     
 
@@ -65,6 +82,7 @@ firebase.auth()
     var token = credential.accessToken;
     // The signed-in user info.
     var user = result.user;
+    
     // IdP data available in result.additionalUserInfo.profile.
       // ...
   }).catch((error) => {
@@ -77,7 +95,8 @@ firebase.auth()
     var credential = error.credential;
     // ...
   });
- 
+  
 }
+    
 </script>
 {% endblock %}
