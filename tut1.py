@@ -57,15 +57,6 @@ class users(db.Model):
         self.uuid = uuid
        
         self.timestamp = ""
-
-    # def add_sign_up_timestamp(self):
-    #     now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    #     if self.timestamp:
-    #             self.timestamp += f"CREATED ACCOUNT:, {now}"
-            
-    #     else:
-    #         self.timestamp = now
-    #     self.create_acc_logs_file()  # Update the logs file immediately after adding the timestamp
     
     
     def add_login_timestamp(self):
@@ -84,11 +75,6 @@ class users(db.Model):
         logs_file_path = os.path.join(os.path.dirname(__file__), "logs_final.txt")
         with open(logs_file_path, "a") as file:
             file.write(f"{self.name}: {self.get_login_timestamps()}\nEmail: {self.email}\n")
-
-    # def create_acc_logs_file(self):
-    #     logs_file_path = os.path.join(os.path.dirname(__file__), "logs_final.txt")
-    #     with open(logs_file_path, "a") as file:
-    #         file.write(f"{self.name}: {self.get_login_timestamps()}\nEmail: {self.email}\n")
 
 class City(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -125,14 +111,22 @@ def sign_up():
             found_user = users(email=email, name=name, uuid=uuid)
             db.session.add(found_user)
             db.session.commit()
-            # found_user.add_sign_up_timestamp()
+            now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            log_signup_timestamp(name, email, now)
+
         return redirect(url_for("user"))
     else:
         if "user" in session:
             flash(f"You are already Logged In!!!")
         return render_template("sign_up.html")
         
-    # return render_template("sign_up.html")
+   
+
+def log_signup_timestamp(name, email, timestamp):
+    logs_file_path = os.path.join(os.path.dirname(__file__), "logs_final.txt")
+    with open(logs_file_path, "a") as file:
+            file.write(f"Acount Created:{name},\n{timestamp}\nEmail: {email}\n")
+
 
 
 
